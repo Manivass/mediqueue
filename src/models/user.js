@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      maxlength: 20,
     },
 
     email: {
@@ -33,8 +34,12 @@ const userSchema = new mongoose.Schema(
 
     phone: {
       type: String,
-      required: true,
       trim: true,
+      validate: function (value) {
+        if (!validator.isMobilePhone(value)) {
+          throw new Error("phone number is invalid");
+        }
+      },
     },
 
     role: {
@@ -53,4 +58,5 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("User", userSchema);
+const User = new mongoose.model("User", userSchema);
+module.exports = User;

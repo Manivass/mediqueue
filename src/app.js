@@ -1,8 +1,14 @@
 const express = require("express");
 
 const connectionDB = require("./database");
+const user = require("./routes/user");
+const cookieParser = require("cookie-parser");
 
 const app = express();
+app.use(cookieParser());
+app.use(express.json());
+
+app.use("/", user);
 
 connectionDB()
   .then(() => {
