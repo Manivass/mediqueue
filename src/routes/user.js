@@ -93,4 +93,13 @@ user.post("/login", async (req, res) => {
   }
 });
 
+user.post("/logout", async (req, res) => {
+  try {
+    res.cookie("token", "", { expires: new Date(0) });
+    res.status(200).json({ success: true, messagae: "logout successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, messagae: err.messagae });
+  }
+});
+
 module.exports = user;
