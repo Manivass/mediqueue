@@ -34,6 +34,13 @@ user.post("/signup", async (req, res) => {
 
     await user.save();
 
+    const token = await user.getJWTKey();
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 3600 * 1000 * 24),
+    });
+
     // 5. Send response
     res.status(201).json({
       message: "User registered successfully",
@@ -42,6 +49,44 @@ user.post("/signup", async (req, res) => {
         name: user.name,
         email: user.email,
       },
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+user.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const isEmailAvailable = await User.findOne({ email });
+    if (!isEmailAvailable) {
+      return res
+        .status(400)
+        .json({ success: false, message: "invalid credentials" });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      isEmailAvailable.password,
+    );
+
+    if (!isPasswordCorrect) {
+      return res
+        .status(400)
+        .json({ success: false, message: "invalid credentials" });
+    }
+
+    const token = await isEmailAvailable.getJWT();
+
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 100 * 60 * 60 * 24),
+    });
+    res.status(200).json({
+      success: true,
+      message: "successfully logged in",
+      user: isEmailAvailable,
+      token,
     });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
