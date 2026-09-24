@@ -26,7 +26,6 @@ appointment.post("/appointment/:id", userAuth, async (req, res) => {
       });
     }
 
-    // Combine date + time
     const appointmentDateTime = new Date(
       `${appointmentDate}T${appointmentTime}`,
     );
@@ -62,5 +61,9 @@ appointment.post("/appointment/:id", userAuth, async (req, res) => {
     });
   }
 });
+
+
+
+
 
 module.exports = appointment;

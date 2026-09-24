@@ -8,17 +8,8 @@ const doctorAvailabilitySchema = new mongoose.Schema(
       required: true,
     },
 
-    dayOfWeek: {
-      type: String,
-      enum: [
-        "MONDAY",
-        "TUESDAY",
-        "WEDNESDAY",
-        "THURSDAY",
-        "FRIDAY",
-        "SATURDAY",
-        "SUNDAY",
-      ],
+    date: {
+      type: Date,
       required: true,
     },
 
@@ -39,12 +30,15 @@ const doctorAvailabilitySchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-const doctorAvailability = new mongoose.model(
-  "DoctorAvailablity",
-  doctorAvailabilitySchema,
+doctorAvailabilitySchema.index(
+  { doctorId: 1, date: 1 },
+  { unique: true }
 );
 
-module.exports = doctorAvailability;
+module.exports = mongoose.model(
+  "DoctorAvailability",
+  doctorAvailabilitySchema
+);
